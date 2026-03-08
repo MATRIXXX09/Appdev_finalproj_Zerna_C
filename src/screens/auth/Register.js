@@ -6,15 +6,21 @@ import CustomTextInput from '../../components/CustomTextInput';
 import { ROUTES } from '../../utils';
 
 import { useDispatch, useSelector } from 'react-redux';
+import { userRegister } from '../../app/reducers/auth';
 
 const Register = () => {
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [emailConfirm, setEmailConfirm] = useState('');
   const [password, setPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [validationError, setValidationError] = useState('');
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const { isLoading, isError, errorMessage } = useSelector(state => state.auth);
 
   return (
     <View style={styles.container}>
@@ -31,10 +37,30 @@ const Register = () => {
 
       <View style={styles.card}>
         <CustomTextInput
-          label={'Full Name'}
-          placeholder={'Enter your Full Name'}
-          value={name}
-          onChangeText={setName}
+          label={'First Name'}
+          placeholder={'Enter your First Name'}
+          value={firstName}
+          onChangeText={setFirstName}
+          containerStyle={styles.inputContainer}
+          labelStyle={styles.inputLabel}
+          textStyle={styles.inputText}
+        />
+
+        <CustomTextInput
+          label={'Last Name'}
+          placeholder={'Enter your Last Name'}
+          value={lastName}
+          onChangeText={setLastName}
+          containerStyle={styles.inputContainer}
+          labelStyle={styles.inputLabel}
+          textStyle={styles.inputText}
+        />
+
+        <CustomTextInput
+          label={'Username'}
+          placeholder={'Choose a username (unique)'}
+          value={username}
+          onChangeText={setUsername}
           containerStyle={styles.inputContainer}
           labelStyle={styles.inputLabel}
           textStyle={styles.inputText}
@@ -65,17 +91,55 @@ const Register = () => {
           placeholder={'Enter your Password'}
           value={password}
           onChangeText={setPassword}
+          containerStyle={styles.inputContainer}
+          labelStyle={styles.inputLabel}
+          textStyle={styles.inputText}
+        />
+
+        <CustomTextInput
+          label={'Phone (optional)'}
+          placeholder={'Enter your Phone Number'}
+          value={phoneNumber}
+          onChangeText={setPhoneNumber}
           containerStyle={[styles.inputContainer, { marginBottom: 0 }]}
           labelStyle={styles.inputLabel}
           textStyle={styles.inputText}
         />
 
+        {(isError && errorMessage) || validationError ? (
+          <Text style={styles.errorText}>{validationError || errorMessage}</Text>
+        ) : null}
         <CustomButton
           label={'REGISTER'}
           containerStyle={styles.registerButton}
           textStyle={styles.registerButtonText}
-          onPress={async () => {
-            // dispatch registration
+          loading={isLoading === true}
+          onPress={() => {
+            setValidationError('');
+            if (email !== emailConfirm) {
+              setValidationError('Emails do not match');
+              console.log('[Register Screen] validation failed: emails do not match');
+              return;
+            }
+            if (!username.trim()) {
+              setValidationError('Username is required');
+              return;
+            }
+            if (!email.trim() || !password) {
+              setValidationError('Email and password are required');
+              return;
+            }
+            console.log('[Register Screen] REGISTER pressed, dispatching USER_REGISTER');
+            dispatch(
+              userRegister({
+                firstName: firstName.trim(),
+                lastName: lastName.trim(),
+                username: username.trim(),
+                email: email.trim(),
+                password,
+                phoneNumber: phoneNumber.trim(),
+              }),
+            );
           }}
         />
 
@@ -244,6 +308,12 @@ const styles = StyleSheet.create({
     letterSpacing: 4,
     marginTop: 32,
     fontWeight: '700',
+  },
+  errorText: {
+    color: '#c0392b',
+    fontSize: 14,
+    marginBottom: 10,
+    textAlign: 'center',
   },
 });
 

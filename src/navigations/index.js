@@ -9,21 +9,16 @@ import { useSelector } from 'react-redux';
 export default () => {
   const isDarkMode = useColorScheme() === 'dark';
   const { data } = useSelector(state => state.auth);
+  const isLoggedIn = !!(data?.token);
 
   useEffect(() => {
     if (Platform.OS === 'android') {
-      StatusBar.setBackgroundColor('#fff5f9', true); // Changed to match K-pop theme
+      StatusBar.setBackgroundColor('#fff5f9', true);
     }
-
     StatusBar.setBarStyle('dark-content', true);
   }, [isDarkMode]);
 
-  console.log('TEST: ', JSON.stringify(data, null, 2));
-
-  // TEMPORARILY DISABLED AUTH - Always show MainNav (Home Screen)
-  // To enable authentication later, uncomment the line below and comment out the next line:
-  // let isLoggedIn = !!data;
-  let isLoggedIn = false; // Always true for development
+  console.log('[Navigation] auth.data:', data ? { hasToken: !!data.token, user: data.user?.email } : null, '| isLoggedIn:', isLoggedIn);
 
   return (
     <NavigationContainer>

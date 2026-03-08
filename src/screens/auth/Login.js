@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Alert, Text, TouchableOpacity, View, StyleSheet, ImageBackground, StatusBar } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
@@ -8,15 +8,20 @@ import { ROUTES } from '../../utils';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { userLogin } from '../../app/reducers/auth';
+import { checkBackendConnection } from '../../app/api/auth';
 
 const Login = () => {
   const [studentID, setStudentID] = useState('');
   const [password, setPassword] = useState('');
 
-  const { isLoading } = useSelector(state => state.auth);
+  const { isLoading, isError, errorMessage } = useSelector(state => state.auth);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    checkBackendConnection();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -52,12 +57,16 @@ const Login = () => {
           textStyle={styles.inputText}
         />
 
+        {isError && errorMessage ? (
+          <Text style={styles.errorText}>{errorMessage}</Text>
+        ) : null}
         <CustomButton
           label={'LOGIN'}
           containerStyle={styles.loginButton}
           textStyle={styles.loginButtonText}
-          loading={isLoading}
-          onPress={async () => {
+          loading={isLoading === true}
+          onPress={() => {
+            console.log('[Login Screen] LOGIN pressed, dispatching USER_LOGIN');
             dispatch(
               userLogin({
                 email: studentID,
@@ -233,6 +242,12 @@ const styles = StyleSheet.create({
     letterSpacing: 4,
     marginTop: 32,
     fontWeight: '700',
+  },
+  errorText: {
+    color: '#c0392b',
+    fontSize: 14,
+    marginBottom: 10,
+    textAlign: 'center',
   },
 });
 

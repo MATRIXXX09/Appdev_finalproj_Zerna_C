@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import { Image, Text, TouchableOpacity, View, StyleSheet, ScrollView } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import { IMG } from '../utils';
+import { userLogout } from '../app/reducers/auth';
 
 const ProfileScreen = () => {
   const [activeTab, setActiveTab] = useState('posts');
+  const dispatch = useDispatch();
+  const authData = useSelector(state => state.auth?.data);
+  const user = authData?.user;
 
   const userStats = {
     followers: '12.5K',
@@ -35,8 +40,14 @@ const ProfileScreen = () => {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Profile</Text>
-        <TouchableOpacity style={styles.settingsButton}>
-          <Text style={styles.settingsIcon}>⚙️</Text>
+        <TouchableOpacity
+          style={styles.settingsButton}
+          onPress={() => {
+            console.log('[Profile Screen] LOGOUT pressed, dispatching USER_LOGOUT');
+            dispatch(userLogout());
+          }}
+        >
+          <Text style={styles.settingsIcon}>🚪 Logout</Text>
         </TouchableOpacity>
       </View>
 
@@ -46,8 +57,10 @@ const ProfileScreen = () => {
           <View style={styles.profileHeader}>
             <Image source={{ uri: IMG.LOGO }} style={styles.profileImage} />
             <View style={styles.profileInfo}>
-              <Text style={styles.username}>@kpopfan123</Text>
-              <Text style={styles.bio}>K-pop enthusiast | Music lover | Fan since 2018 🎵✨</Text>
+              <Text style={styles.username}>{user?.username ? `@${user.username}` : user?.email || 'Guest'}</Text>
+              <Text style={styles.bio}>
+                {[user?.firstName, user?.lastName].filter(Boolean).join(' ') || user?.email || 'K-pop enthusiast 🎵✨'}
+              </Text>
               <View style={styles.verifiedBadge}>
                 <Text style={styles.verifiedText}>✓ Verified Buyer</Text>
               </View>

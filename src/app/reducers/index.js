@@ -1,5 +1,6 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { persistReducer, persistStore } from 'redux-persist';
+import autoMergeLevel1 from 'redux-persist/lib/stateReconciler/autoMergeLevel1';
 import createSagaMiddleware from 'redux-saga';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -10,13 +11,16 @@ const sagaMiddleware = createSagaMiddleware();
 const rootPersistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  blacklist: ['auth'],
+  blacklist: [],
 };
 
+// Only persist auth.data (token/user). Do not persist isLoading/isError/errorMessage
+// so buttons only show loading when a request is actually in progress.
 const authPersistConfig = {
   key: 'auth',
   storage: AsyncStorage,
-  blacklist: [],
+  whitelist: ['data'],
+  stateReconciler: autoMergeLevel1,
 };
 
 // Combine Reducers
