@@ -1,253 +1,240 @@
-import { useState, useEffect } from 'react';
-import { Alert, Text, TouchableOpacity, View, StyleSheet, ImageBackground, StatusBar } from 'react-native';
-
-import { useNavigation } from '@react-navigation/native';
-import CustomButton from '../../components/CustomButton';
-import CustomTextInput from '../../components/CustomTextInput';
-import { ROUTES } from '../../utils';
-
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+  Image,
+  ActivityIndicator,
+} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { userLogin } from '../../app/reducers/auth';
-import { checkBackendConnection } from '../../app/api/auth';
+import { USER_LOGIN, USER_LOGIN_RESET } from '../../app/actions';
 
-const Login = () => {
-  const [studentID, setStudentID] = useState('');
-  const [password, setPassword] = useState('');
-
-  const { isLoading, isError, errorMessage } = useSelector(state => state.auth);
-
-  const navigation = useNavigation();
+const Login = ({ navigation }) => {
   const dispatch = useDispatch();
+  const { isLoading, isError, errorMessage, data } = useSelector(state => state.auth);
+  
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [alertShown, setAlertShown] = useState(false);
+
+{/*useEffect(() => {
+  if (isError && errorMessage && !alertShown) {
+    Alert.alert('Login Failed', errorMessage);
+    setAlertShown(true);
+  }
+}, [isError, errorMessage, alertShown]);*/}
 
   useEffect(() => {
-    checkBackendConnection();
-  }, []);
+    dispatch({ type: USER_LOGIN_RESET });
+    setAlertShown(false);
+  }, [dispatch]);
+
+  // Auto-navigate when login is successful
+  useEffect(() => {
+    if (data?.token) {
+      navigation.replace('MainApp');
+    }
+  }, [data, navigation]);
+
+  const handleLogin = () => {
+    setAlertShown(false); // Reset alert flag for next attempt
+    
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+    
+    if (!email.includes('@')) {
+      Alert.alert('Error', 'Please enter a valid email address');
+      return;
+    }
+
+    // Dispatch login action to Redux/Saga
+    dispatch({
+      type: USER_LOGIN,
+      payload: { email: email.trim(), password },
+    });
+  };
+
+  // Show error alert when login fails (only once per error)
+  useEffect(() => {
+    if (isError && errorMessage && !alertShown) {
+      Alert.alert('Login Failed', errorMessage);
+      setAlertShown(true);
+    }
+  }, [isError, errorMessage, alertShown]);
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0a0010" />
-
+    <ScrollView style={styles.container}>
       <View style={styles.glowCircle1} />
       <View style={styles.glowCircle2} />
 
       <View style={styles.headerContainer}>
-        <Text style={styles.kpopLabel}>✦ KPOP PORTAL ✦</Text>
+        <Image
+          source={require('../../assets/HABAL.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
         <Text style={styles.title}>WELCOME{'\n'}BACK</Text>
         <View style={styles.titleUnderline} />
       </View>
 
       <View style={styles.card}>
-        <CustomTextInput
-          label={'Email'}
-          placeholder={'Enter your Email'}
-          value={studentID}
-          onChangeText={setStudentID}
-          containerStyle={styles.inputContainer}
-          labelStyle={styles.inputLabel}
-          textStyle={styles.inputText}
-        />
-
-        <CustomTextInput
-          label={'Password'}
-          placeholder={'Enter your Password'}
-          value={password}
-          onChangeText={setPassword}
-          containerStyle={[styles.inputContainer, { marginBottom: 0 }]}
-          labelStyle={styles.inputLabel}
-          textStyle={styles.inputText}
-        />
-
-        {isError && errorMessage ? (
-          <Text style={styles.errorText}>{errorMessage}</Text>
-        ) : null}
-        <CustomButton
-          label={'LOGIN'}
-          containerStyle={styles.loginButton}
-          textStyle={styles.loginButtonText}
-          loading={isLoading === true}
-          onPress={() => {
-            console.log('[Login Screen] LOGIN pressed, dispatching USER_LOGIN');
-            dispatch(
-              userLogin({
-                email: studentID,
-                password: password,
-              }),
-            );
-          }}
-        />
-
-        <View style={styles.dividerRow}>
-          <View style={styles.dividerLine} />
-          <Text style={styles.dividerText}>✦</Text>
-          <View style={styles.dividerLine} />
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your email"
+            placeholderTextColor="#999"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
         </View>
 
-        <View style={styles.registerRow}>
-          <Text style={styles.registerText}>Not registered yet?</Text>
-          <TouchableOpacity
-            style={{ marginLeft: 6 }}
-            onPress={() => navigation.navigate(ROUTES.REGISTER)}
-          >
-            <Text style={styles.registerLink}>Register</Text>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Password</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your password"
+            placeholderTextColor="#999"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+        </View>
+
+        <TouchableOpacity
+          style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
+          onPress={handleLogin}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#fff" size="small" />
+          ) : (
+            <Text style={styles.loginButtonText}>LOGIN</Text>
+          )}
+        </TouchableOpacity>
+
+        <View style={styles.signupContainer}>
+          <Text style={styles.signupText}>Don't have an account? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+            <Text style={styles.signupLink}>Sign Up</Text>
           </TouchableOpacity>
         </View>
       </View>
-
-      <Text style={styles.footerText}>✦ KPOP UNIVERSE ✦</Text>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff5f9',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 24,
+    backgroundColor: '#000',
+    paddingHorizontal: 20,
   },
   glowCircle1: {
-    position: 'absolute',
     width: 300,
     height: 300,
     borderRadius: 150,
-    backgroundColor: '#ff1493',
-    opacity: 0.12,
-    top: -60,
-    right: -80,
+    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+    position: 'absolute',
+    top: -100,
+    left: -100,
   },
   glowCircle2: {
-    position: 'absolute',
     width: 250,
     height: 250,
     borderRadius: 125,
-    backgroundColor: '#fbbfbf',
-    opacity: 0.15,
-    bottom: 40,
-    left: -60,
+    backgroundColor: 'rgba(220, 20, 60, 0.1)',
+    position: 'absolute',
+    top: 200,
+    right: -80,
   },
   headerContainer: {
     alignItems: 'center',
     marginBottom: 36,
+    marginTop: 60,
   },
-  kpopLabel: {
-    color: '#ff1493',
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 4,
-    marginBottom: 10,
+  logo: {
+    width: 120,
+    height: 120,
+    marginBottom: 20,
   },
   title: {
-    color: '#d946ef',
+    color: '#22C55E',
     fontSize: 44,
     fontWeight: '900',
     textAlign: 'center',
-    lineHeight: 48,
-    letterSpacing: 2,
+    lineHeight: 52,
   },
   titleUnderline: {
-    width: 60,
-    height: 3,
-    backgroundColor: '#ff1493',
-    marginTop: 12,
+    width: 80,
+    height: 4,
+    backgroundColor: '#22C55E',
     borderRadius: 2,
+    marginTop: 16,
   },
   card: {
-    width: '100%',
-    backgroundColor: '#ffffff',
-    borderRadius: 24,
-    padding: 28,
-    borderWidth: 2,
-    borderColor: '#ffc0cb',
-    shadowColor: '#ff1493',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 20,
-    elevation: 10,
+    backgroundColor: 'rgba(30, 30, 30, 0.8)',
+    borderRadius: 20,
+    padding: 24,
+    marginBottom: 40,
+    borderWidth: 1,
+    borderColor: 'rgba(34, 197, 94, 0.2)',
   },
-  inputContainer: {
-    width: '100%',
-    alignSelf: 'stretch', // make sure it respects parent padding and doesn't overflow
-    marginBottom: 18,
+  inputGroup: {
+    marginBottom: 20,
   },
-  inputLabel: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#d946ef',
-    letterSpacing: 2,
-    textTransform: 'uppercase',
-    marginBottom: 6,
+  label: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 8,
   },
-  inputText: {
-    fontSize: 16,
-    color: '#333333',
-    backgroundColor: '#ffffff',
+  input: {
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(34, 197, 94, 0.3)',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
+    color: '#fff',
+    fontSize: 14,
   },
   loginButton: {
-    marginTop: 10,
-    marginBottom: 24,
-    width: '100%',
-    backgroundColor: '#ff1493',
-    borderRadius: 14,
+    backgroundColor: '#22C55E',
+    borderRadius: 12,
     paddingVertical: 16,
-    shadowColor: '#ff1493',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 8,
+    alignItems: 'center',
+    marginTop: 24,
+  },
+  loginButtonDisabled: {
+    opacity: 0.6,
   },
   loginButtonText: {
-    color: '#ffffff',
-    textAlign: 'center',
-    fontWeight: '900',
+    color: '#fff',
     fontSize: 16,
-    letterSpacing: 4,
-  },
-  dividerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#ffc0cb',
-  },
-  dividerText: {
-    color: '#ff1493',
-    marginHorizontal: 10,
-    fontSize: 12,
-  },
-  registerRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  registerText: {
-    color: '#666666',
-    fontSize: 14,
-  },
-  registerLink: {
-    color: '#ff1493',
-    fontWeight: '800',
-    fontSize: 14,
+    fontWeight: '700',
     letterSpacing: 1,
   },
-  footerText: {
-    color: '#d946ef',
-    fontSize: 10,
-    letterSpacing: 4,
-    marginTop: 32,
-    fontWeight: '700',
+  signupContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 20,
   },
-  errorText: {
-    color: '#c0392b',
+  signupText: {
+    color: '#999',
     fontSize: 14,
-    marginBottom: 10,
-    textAlign: 'center',
+  },
+  signupLink: {
+    color: '#22C55E',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
 
