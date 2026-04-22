@@ -1,434 +1,304 @@
-import React, { useState } from 'react';
-import { Image, Text, TouchableOpacity, View, StyleSheet, ScrollView } from 'react-native';
+import React from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { IMG } from '../utils';
-import { userLogout } from '../app/reducers/auth';
+import { USER_LOGOUT } from '../app/actions';
 
-const ProfileScreen = () => {
-  const [activeTab, setActiveTab] = useState('posts');
+const ProfileScreen = ({ navigation }) => {
   const dispatch = useDispatch();
-  const authData = useSelector(state => state.auth?.data);
-  const user = authData?.user;
+  const { data: authData, isLoading } = useSelector(state => state.auth);
 
-  const userStats = {
-    followers: '12.5K',
-    following: '890',
-    products: '45'
+  const userProfile = {
+    name: authData?.user?.firstName && authData?.user?.lastName
+      ? `${authData.user.firstName} ${authData.user.lastName}`
+      : authData?.user?.email || 'User',
+    email: authData?.user?.email || 'user@example.com',
+    phone: authData?.user?.phoneNumber || 'Not provided',
+    avatar: '👤',
+    rating: 4.8,
+    rides: 0,
+    joinDate: 'Joined March 2024',
   };
 
-  const posts = [
-    { id: 1, image: IMG.LOGO, type: 'product', likes: 234, comments: 12 },
-    { id: 2, image: IMG.LOGO, type: 'review', likes: 456, comments: 23 },
-    { id: 3, image: IMG.LOGO, type: 'product', likes: 189, comments: 8 },
-    { id: 4, image: IMG.LOGO, type: 'review', likes: 321, comments: 15 },
-    { id: 5, image: IMG.LOGO, type: 'product', likes: 567, comments: 28 },
-    { id: 6, image: IMG.LOGO, type: 'review', likes: 198, comments: 9 },
-  ];
-
-  const reviews = [
-    { id: 1, product: 'BTS Album', rating: 5, comment: 'Amazing quality! Fast shipping too! 💜', date: '2 days ago' },
-    { id: 2, product: 'Blackpink Lightstick', rating: 5, comment: 'Perfect for concerts! Love it! ✨', date: '1 week ago' },
-    { id: 3, product: 'Twice Photobook', rating: 4, comment: 'Beautiful photos, great packaging!', date: '2 weeks ago' },
-  ];
-
-  const renderStars = (rating) => {
-    return '⭐'.repeat(rating);
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {
+          text: 'Logout',
+          onPress: () => {
+            dispatch({ type: USER_LOGOUT, payload: authData?.token });
+          },
+          style: 'destructive',
+        },
+      ]
+    );
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
+    <ScrollView style={styles.container}>
       <View style={styles.header}>
+        <Image
+          source={require('../assets/HABAL.png')}
+          style={styles.headerLogo}
+          resizeMode="contain"
+        />
         <Text style={styles.headerTitle}>Profile</Text>
-        <TouchableOpacity
-          style={styles.settingsButton}
-          onPress={() => {
-            console.log('[Profile Screen] LOGOUT pressed, dispatching USER_LOGOUT');
-            dispatch(userLogout());
-          }}
-        >
-          <Text style={styles.settingsIcon}>🚪 Logout</Text>
+      </View>
+
+      {/* Profile Card */}
+      <View style={styles.profileCard}>
+        <View style={styles.avatarContainer}>
+          <Text style={styles.avatar}>{userProfile.avatar}</Text>
+        </View>
+        <Text style={styles.userName}>{userProfile.name}</Text>
+        <Text style={styles.userEmail}>{userProfile.email}</Text>
+        <Text style={styles.joinDate}>{userProfile.joinDate}</Text>
+
+        <View style={styles.statsContainer}>
+          <View style={styles.stat}>
+            <Text style={styles.statValue}>⭐ {userProfile.rating}</Text>
+            <Text style={styles.statLabel}>Rating</Text>
+          </View>
+          <View style={styles.dividerVertical} />
+          <View style={styles.stat}>
+            <Text style={styles.statValue}>🚗 {userProfile.rides}</Text>
+            <Text style={styles.statLabel}>Rides</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Account Information */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Account Information</Text>
+
+        <View style={styles.infoItem}>
+          <Text style={styles.infoLabel}>Phone Number</Text>
+          <Text style={styles.infoValue}>{userProfile.phone}</Text>
+        </View>
+
+        <View style={styles.infoItem}>
+          <Text style={styles.infoLabel}>Email Address</Text>
+          <Text style={styles.infoValue}>{userProfile.email}</Text>
+        </View>
+
+        <View style={styles.infoItem}>
+          <Text style={styles.infoLabel}>Account Status</Text>
+          <Text style={styles.infoValue}>✓ Active</Text>
+        </View>
+      </View>
+
+      {/* Settings */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Settings</Text>
+
+        <TouchableOpacity style={styles.settingItem}>
+          <Text style={styles.settingLabel}>🔐 Change Password</Text>
+          <Text style={styles.arrow}>›</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.settingItem}>
+          <Text style={styles.settingLabel}>🔔 Notifications</Text>
+          <Text style={styles.arrow}>›</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.settingItem}>
+          <Text style={styles.settingLabel}>❓ Help & Support</Text>
+          <Text style={styles.arrow}>›</Text>
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        {/* Profile Info */}
-        <View style={styles.profileSection}>
-          <View style={styles.profileHeader}>
-            <Image source={{ uri: IMG.LOGO }} style={styles.profileImage} />
-            <View style={styles.profileInfo}>
-              <Text style={styles.username}>{user?.username ? `@${user.username}` : user?.email || 'Guest'}</Text>
-              <Text style={styles.bio}>
-                {[user?.firstName, user?.lastName].filter(Boolean).join(' ') || user?.email || 'K-pop enthusiast 🎵✨'}
-              </Text>
-              <View style={styles.verifiedBadge}>
-                <Text style={styles.verifiedText}>✓ Verified Buyer</Text>
-              </View>
-            </View>
-          </View>
-
-          {/* Stats */}
-          <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{userStats.followers}</Text>
-              <Text style={styles.statLabel}>Followers</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{userStats.following}</Text>
-              <Text style={styles.statLabel}>Following</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{userStats.products}</Text>
-              <Text style={styles.statLabel}>Products</Text>
-            </View>
-          </View>
-
-          {/* Action Buttons */}
-          <View style={styles.actionButtons}>
-            <TouchableOpacity style={styles.editProfileButton}>
-              <Text style={styles.editProfileText}>Edit Profile</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.shareProfileButton}>
-              <Text style={styles.shareProfileText}>Share Profile</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Tabs */}
-        <View style={styles.tabsContainer}>
-          <TouchableOpacity
-            style={[styles.tab, activeTab === 'posts' && styles.activeTab]}
-            onPress={() => setActiveTab('posts')}
-          >
-            <Text style={[styles.tabText, activeTab === 'posts' && styles.activeTabText]}>
-              Posts
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.tab, activeTab === 'reviews' && styles.activeTab]}
-            onPress={() => setActiveTab('reviews')}
-          >
-            <Text style={[styles.tabText, activeTab === 'reviews' && styles.activeTabText]}>
-              Reviews
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.tab, activeTab === 'favorites' && styles.activeTab]}
-            onPress={() => setActiveTab('favorites')}
-          >
-            <Text style={[styles.tabText, activeTab === 'favorites' && styles.activeTabText]}>
-              Favorites
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Content */}
-        {activeTab === 'posts' && (
-          <View style={styles.postsGrid}>
-            {posts.map((post) => (
-              <TouchableOpacity key={post.id} style={styles.postItem}>
-                <Image source={{ uri: post.image }} style={styles.postImage} />
-                <View style={styles.postOverlay}>
-                  <Text style={styles.postType}>
-                    {post.type === 'product' ? '🛍️' : '⭐'}
-                  </Text>
-                  <View style={styles.postStats}>
-                    <Text style={styles.postStat}>❤️ {post.likes}</Text>
-                    <Text style={styles.postStat}>💬 {post.comments}</Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
+      {/* Logout */}
+      <TouchableOpacity
+        style={[styles.logoutButton, isLoading && styles.logoutButtonDisabled]}
+        onPress={handleLogout}
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <ActivityIndicator color="#fff" size="small" />
+        ) : (
+          <Text style={styles.logoutButtonText}>LOGOUT</Text>
         )}
+      </TouchableOpacity>
 
-        {activeTab === 'reviews' && (
-          <View style={styles.reviewsContainer}>
-            {reviews.map((review) => (
-              <View key={review.id} style={styles.reviewCard}>
-                <View style={styles.reviewHeader}>
-                  <Text style={styles.reviewProduct}>{review.product}</Text>
-                  <Text style={styles.reviewDate}>{review.date}</Text>
-                </View>
-                <Text style={styles.reviewRating}>{renderStars(review.rating)}</Text>
-                <Text style={styles.reviewComment}>{review.comment}</Text>
-                <View style={styles.reviewActions}>
-                  <TouchableOpacity style={styles.reviewAction}>
-                    <Text style={styles.reviewActionText}>👍 Helpful</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.reviewAction}>
-                    <Text style={styles.reviewActionText}>💬 Reply</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
-
-        {activeTab === 'favorites' && (
-          <View style={styles.favoritesContainer}>
-            <Text style={styles.comingSoonText}>Favorites coming soon! 💖</Text>
-            <Text style={styles.comingSoonSubtext}>Save your favorite K-pop products here</Text>
-          </View>
-        )}
-      </ScrollView>
-    </View>
+      <View style={styles.spacer} />
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff5f9',
+    backgroundColor: '#000',
   },
   header: {
+    backgroundColor: '#22C55E',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 50,
-    paddingBottom: 15,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ffc0cb',
+    gap: 12,
+  },
+  headerLogo: {
+    width: 32,
+    height: 32,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: '900',
-    color: '#d946ef',
-  },
-  settingsButton: {
-    padding: 8,
-  },
-  settingsIcon: {
-    fontSize: 20,
-  },
-  scrollContainer: {
+    color: '#000',
+    fontSize: 18,
+    fontWeight: '700',
     flex: 1,
   },
-  profileSection: {
-    backgroundColor: '#ffffff',
-    padding: 20,
-    marginBottom: 10,
+  profileCard: {
+    margin: 16,
+    backgroundColor: 'rgba(30, 30, 30, 0.8)',
+    borderRadius: 12,
+    padding: 24,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(34, 197, 94, 0.3)',
   },
-  profileHeader: {
-    flexDirection: 'row',
-    marginBottom: 20,
-  },
-  profileImage: {
+  avatarContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    borderWidth: 3,
-    borderColor: '#ff1493',
+    backgroundColor: 'rgba(34, 197, 94, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+    borderWidth: 2,
+    borderColor: '#22C55E',
   },
-  profileInfo: {
-    flex: 1,
-    marginLeft: 15,
+  avatar: {
+    fontSize: 40,
   },
-  username: {
+  userName: {
+    color: '#fff',
     fontSize: 20,
-    fontWeight: '900',
-    color: '#d946ef',
-    marginBottom: 5,
-  },
-  bio: {
-    fontSize: 14,
-    color: '#666666',
-    marginBottom: 8,
-    lineHeight: 18,
-  },
-  verifiedBadge: {
-    backgroundColor: '#ffe0f0',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: '#ffb6c1',
-  },
-  verifiedText: {
-    fontSize: 12,
     fontWeight: '700',
-    color: '#ff1493',
+    marginBottom: 4,
+  },
+  userEmail: {
+    color: '#22C55E',
+    fontSize: 12,
+    marginBottom: 4,
+  },
+  joinDate: {
+    color: '#999',
+    fontSize: 11,
+    marginBottom: 16,
   },
   statsContainer: {
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 20,
-  },
-  statItem: {
     alignItems: 'center',
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(34, 197, 94, 0.2)',
   },
-  statNumber: {
-    fontSize: 20,
-    fontWeight: '900',
-    color: '#d946ef',
+  stat: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  statValue: {
+    color: '#22C55E',
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 4,
   },
   statLabel: {
-    fontSize: 12,
-    color: '#666666',
+    color: '#999',
+    fontSize: 11,
+  },
+  dividerVertical: {
+    width: 1,
+    height: 30,
+    backgroundColor: 'rgba(34, 197, 94, 0.2)',
+  },
+  section: {
+    paddingHorizontal: 16,
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '700',
+    marginBottom: 12,
+    marginTop: 8,
+  },
+  infoItem: {
+    backgroundColor: 'rgba(30, 30, 30, 0.8)',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(34, 197, 94, 0.2)',
+  },
+  infoLabel: {
+    color: '#999',
+    fontSize: 11,
+    marginBottom: 4,
+  },
+  infoValue: {
+    color: '#fff',
+    fontSize: 14,
     fontWeight: '600',
   },
-  actionButtons: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  editProfileButton: {
-    flex: 1,
-    backgroundColor: '#ff1493',
-    paddingVertical: 12,
-    borderRadius: 25,
-    alignItems: 'center',
-  },
-  editProfileText: {
-    color: '#ffffff',
-    fontSize: 14,
-    fontWeight: '800',
-  },
-  shareProfileButton: {
-    flex: 1,
-    backgroundColor: '#ffe0f0',
-    paddingVertical: 12,
-    borderRadius: 25,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#ffb6c1',
-  },
-  shareProfileText: {
-    color: '#d946ef',
-    fontSize: 14,
-    fontWeight: '800',
-  },
-  tabsContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#ffffff',
-    marginBottom: 10,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 15,
-    alignItems: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: '#ffe0f0',
-  },
-  activeTab: {
-    borderBottomColor: '#ff1493',
-  },
-  tabText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#666666',
-  },
-  activeTabText: {
-    color: '#ff1493',
-  },
-  postsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: 1,
-  },
-  postItem: {
-    width: '33.333%',
-    aspectRatio: 1,
-    position: 'relative',
-  },
-  postImage: {
-    width: '100%',
-    height: '100%',
-  },
-  postOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    justifyContent: 'space-between',
-    padding: 8,
-  },
-  postType: {
-    fontSize: 16,
-  },
-  postStats: {
-    alignItems: 'flex-end',
-  },
-  postStat: {
-    fontSize: 12,
-    color: '#ffffff',
-    fontWeight: '700',
-  },
-  reviewsContainer: {
-    paddingHorizontal: 20,
-  },
-  reviewCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 15,
-    padding: 15,
-    marginBottom: 15,
-    borderWidth: 2,
-    borderColor: '#ffb6c1',
-    shadowColor: '#ff1493',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  reviewHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  reviewProduct: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#d946ef',
-  },
-  reviewDate: {
-    fontSize: 12,
-    color: '#666666',
-  },
-  reviewRating: {
-    fontSize: 14,
-    marginBottom: 8,
-  },
-  reviewComment: {
-    fontSize: 14,
-    color: '#333333',
-    marginBottom: 12,
-    lineHeight: 20,
-  },
-  reviewActions: {
-    flexDirection: 'row',
-    gap: 15,
-  },
-  reviewAction: {
-    paddingVertical: 6,
+  settingItem: {
+    backgroundColor: 'rgba(30, 30, 30, 0.8)',
+    borderRadius: 8,
     paddingHorizontal: 12,
-    backgroundColor: '#ffe0f0',
-    borderRadius: 15,
+    paddingVertical: 14,
+    marginBottom: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#ffb6c1',
+    borderColor: 'rgba(34, 197, 94, 0.2)',
   },
-  reviewActionText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#d946ef',
+  settingLabel: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
-  favoritesContainer: {
-    padding: 40,
+  arrow: {
+    color: '#22C55E',
+    fontSize: 18,
+  },
+  logoutButton: {
+    marginHorizontal: 16,
+    marginVertical: 24,
+    backgroundColor: '#DC143C',
+    paddingVertical: 16,
+    borderRadius: 12,
     alignItems: 'center',
   },
-  comingSoonText: {
-    fontSize: 20,
-    fontWeight: '900',
-    color: '#d946ef',
-    marginBottom: 10,
+  logoutButtonDisabled: {
+    opacity: 0.6,
   },
-  comingSoonSubtext: {
+  logoutButtonText: {
+    color: '#fff',
     fontSize: 16,
-    color: '#666666',
-    textAlign: 'center',
+    fontWeight: '700',
+    letterSpacing: 1,
+  },
+  spacer: {
+    height: 40,
   },
 });
 
