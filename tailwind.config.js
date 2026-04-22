@@ -12,14 +12,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        kpop: {
-          light: '#fff5f9',
+        shop: {
+          light: '#F0FDF4',
           bg: '#ffffff',
-          pink: '#ff1493',
-          lightpink: '#ffc0cb',
-          sofpink: '#ffb6c1',
-          inputbg: '#ffe0f0',
-          purple: '#d946ef',
+          red: '#DC143C',
+          lightred: '#86EFAC',
+          sofred: '#86EFAC',
+          inputbg: '#D1FAE5',
+          green: '#22C55E',
         }
       }
     },

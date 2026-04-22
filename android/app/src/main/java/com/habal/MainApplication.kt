@@ -1,4 +1,4 @@
-package com.kpop
+package com.habal
 
 import android.app.Application
 import com.facebook.react.PackageList
