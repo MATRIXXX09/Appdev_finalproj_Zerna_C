@@ -20,20 +20,20 @@ import {
   CREATE_BOOKING_ERROR,
 } from '../actions';
 
-function getAuthToken(state: RootState) {
-  return state.auth?.data?.token;
+function getAuthToken(state: RootState): string | null {
+  return state.auth?.data?.token || null;
 }
 
-export function* fetchWalletAsync() {
+export function* fetchWalletAsync(): any {
   console.log('[Saga] FETCH_WALLET started');
   yield put({ type: FETCH_WALLET_REQUEST });
   try {
-    const token = yield select(getAuthToken);
+    const token: string | null = yield select(getAuthToken);
     if (!token) {
       throw new Error('No auth token available');
     }
     console.log('[Saga] Fetching wallet from API...');
-    const response = yield call(getUserWallet, token);
+    const response: any = yield call(getUserWallet, token);
     console.log('[Saga] Wallet fetched successfully');
     yield put({ type: FETCH_WALLET_COMPLETED, payload: response });
   } catch (error: any) {
@@ -42,16 +42,16 @@ export function* fetchWalletAsync() {
   }
 }
 
-export function* fetchActiveBookingsAsync() {
+export function* fetchActiveBookingsAsync(): any {
   console.log('[Saga] FETCH_ACTIVE_BOOKINGS started');
   yield put({ type: FETCH_ACTIVE_BOOKINGS_REQUEST });
   try {
-    const token = yield select(getAuthToken);
+    const token: string | null = yield select(getAuthToken);
     if (!token) {
       throw new Error('No auth token available');
     }
     console.log('[Saga] Fetching active bookings from API...');
-    const response = yield call(getActiveBookings, token);
+    const response: any = yield call(getActiveBookings, token);
     console.log('[Saga] Active bookings fetched successfully');
     yield put({ type: FETCH_ACTIVE_BOOKINGS_COMPLETED, payload: response?.bookings || response });
   } catch (error: any) {
@@ -60,16 +60,16 @@ export function* fetchActiveBookingsAsync() {
   }
 }
 
-export function* fetchCompletedBookingsAsync() {
+export function* fetchCompletedBookingsAsync(): any {
   console.log('[Saga] FETCH_COMPLETED_BOOKINGS started');
   yield put({ type: FETCH_COMPLETED_BOOKINGS_REQUEST });
   try {
-    const token = yield select(getAuthToken);
+    const token: string | null = yield select(getAuthToken);
     if (!token) {
       throw new Error('No auth token available');
     }
     console.log('[Saga] Fetching completed bookings from API...');
-    const response = yield call(getCompletedBookings, token);
+    const response: any = yield call(getCompletedBookings, token);
     console.log('[Saga] Completed bookings fetched successfully');
     yield put({ type: FETCH_COMPLETED_BOOKINGS_COMPLETED, payload: response?.bookings || response });
   } catch (error: any) {
@@ -78,16 +78,16 @@ export function* fetchCompletedBookingsAsync() {
   }
 }
 
-export function* createBookingAsync(action: any) {
+export function* createBookingAsync(action: any): any {
   console.log('[Saga] CREATE_BOOKING started');
   yield put({ type: CREATE_BOOKING_REQUEST });
   try {
-    const token = yield select(getAuthToken);
+    const token: string | null = yield select(getAuthToken);
     if (!token) {
       throw new Error('No auth token available');
     }
     console.log('[Saga] Creating booking via API...');
-    const response = yield call(createBooking, token, action.payload);
+    const response: any = yield call(createBooking, token, action.payload);
     console.log('[Saga] Booking created successfully');
     yield put({ type: CREATE_BOOKING_COMPLETED, payload: response });
   } catch (error: any) {
@@ -96,18 +96,18 @@ export function* createBookingAsync(action: any) {
   }
 }
 
-export function* fetchWallet() {
+export function* fetchWallet(): any {
   yield takeEvery(FETCH_WALLET, fetchWalletAsync);
 }
 
-export function* fetchActiveBookings() {
+export function* fetchActiveBookings(): any {
   yield takeEvery(FETCH_ACTIVE_BOOKINGS, fetchActiveBookingsAsync);
 }
 
-export function* fetchCompletedBookings() {
+export function* fetchCompletedBookings(): any {
   yield takeEvery(FETCH_COMPLETED_BOOKINGS, fetchCompletedBookingsAsync);
 }
 
-export function* createBookingFlow() {
+export function* createBookingFlow(): any {
   yield takeEvery(CREATE_BOOKING, createBookingAsync);
 }

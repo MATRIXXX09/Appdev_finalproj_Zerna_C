@@ -23,11 +23,11 @@ const authPersistConfig = {
 };
 
 const rootReducer = combineReducers({
-  auth: persistReducer(authPersistConfig, auth),
+  auth: persistReducer(authPersistConfig, auth as any),
   bookings,
 });
 
-const persistedReducer = persistReducer(rootPersistConfig, rootReducer);
+const persistedReducer = persistReducer(rootPersistConfig, rootReducer as any);
 
 interface StoreConfig {
   store: Store<RootState>;
@@ -36,7 +36,7 @@ interface StoreConfig {
 }
 
 export default (): StoreConfig => {
-  const store = createStore(persistedReducer, applyMiddleware(sagaMiddleware));
+  const store = createStore(persistedReducer as any, applyMiddleware(sagaMiddleware)) as Store<RootState>;
   const persistor = persistStore(store);
   const runSaga = sagaMiddleware.run;
 
