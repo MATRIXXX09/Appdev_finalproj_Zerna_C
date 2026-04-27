@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import {
   View,
   Text,
@@ -20,7 +20,7 @@ const DashboardScreen = ({ navigation }) => {
     { id: 3, name: 'Logistics', icon: '📦' },
   ];
 
-  const handleBookRide = () => {
+  const handleBookRide: FC = () => {
     if (!pickupLocation || !dropoffLocation || !selectedMode) {
       alert('Please fill in all fields');
       return;
@@ -322,3 +322,6 @@ const styles = StyleSheet.create({
 });
 
 export default DashboardScreen;
+
+
+

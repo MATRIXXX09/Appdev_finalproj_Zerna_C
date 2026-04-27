@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -40,7 +40,7 @@ const Login = ({ navigation }) => {
     }
   }, [data, navigation]);
 
-  const handleLogin = () => {
+  const handleLogin: FC = () => {
     setAlertShown(false); // Reset alert flag for next attempt
     
     if (!email || !password) {
@@ -239,3 +239,7 @@ const styles = StyleSheet.create({
 });
 
 export default Login;
+
+
+
+

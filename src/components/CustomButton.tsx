@@ -1,12 +1,8 @@
-import {
-  ActivityIndicator,
-  Dimensions,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, { FC } from 'react';
+import { ActivityIndicator, Dimensions, Text, TouchableOpacity, View } from 'react-native';
+import { CustomButtonProps } from '../../types';
 
-const CustomButton = ({
+const CustomButton: FC<CustomButtonProps> = ({
   containerStyle,
   label,
   textStyle,

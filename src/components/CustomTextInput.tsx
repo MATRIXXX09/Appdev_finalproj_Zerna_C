@@ -1,9 +1,9 @@
+import React, { FC, useState } from 'react';
 import { Text, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
+import { CustomTextInputProps } from '../../types';
 
-import { useState } from 'react';
-
-const CustomTextInput = ({
+const CustomTextInput: FC<CustomTextInputProps> = ({
   placeholder,
   label,
   labelStyle,
@@ -12,7 +12,7 @@ const CustomTextInput = ({
   containerStyle,
   textStyle,
 }) => {
-  const [focused, setFocused] = useState(false);
+  const [focused, setFocused] = useState<boolean>(false);
 
   return (
     <View style={containerStyle}>
@@ -27,7 +27,6 @@ const CustomTextInput = ({
         style={[
           textStyle,
           {
-            // ensure fixed height so text is always visible
             height: 48,
             color: textStyle?.color || '#333333',
             backgroundColor: textStyle?.backgroundColor || 'transparent',

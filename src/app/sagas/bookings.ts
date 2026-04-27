@@ -1,6 +1,6 @@
 import { call, put, takeEvery, select } from 'redux-saga/effects';
 import { getUserWallet, getActiveBookings, getCompletedBookings, createBooking } from '../api/bookings';
-
+import { RootState } from '../../types';
 import {
   FETCH_WALLET,
   FETCH_WALLET_REQUEST,
@@ -20,7 +20,7 @@ import {
   CREATE_BOOKING_ERROR,
 } from '../actions';
 
-function getAuthToken(state) {
+function getAuthToken(state: RootState) {
   return state.auth?.data?.token;
 }
 
@@ -36,7 +36,7 @@ export function* fetchWalletAsync() {
     const response = yield call(getUserWallet, token);
     console.log('[Saga] Wallet fetched successfully');
     yield put({ type: FETCH_WALLET_COMPLETED, payload: response });
-  } catch (error) {
+  } catch (error: any) {
     console.log('[Saga] Fetch wallet failed:', error?.message);
     yield put({ type: FETCH_WALLET_ERROR, payload: error.message });
   }
@@ -54,7 +54,7 @@ export function* fetchActiveBookingsAsync() {
     const response = yield call(getActiveBookings, token);
     console.log('[Saga] Active bookings fetched successfully');
     yield put({ type: FETCH_ACTIVE_BOOKINGS_COMPLETED, payload: response?.bookings || response });
-  } catch (error) {
+  } catch (error: any) {
     console.log('[Saga] Fetch active bookings failed:', error?.message);
     yield put({ type: FETCH_ACTIVE_BOOKINGS_ERROR, payload: error.message });
   }
@@ -72,13 +72,13 @@ export function* fetchCompletedBookingsAsync() {
     const response = yield call(getCompletedBookings, token);
     console.log('[Saga] Completed bookings fetched successfully');
     yield put({ type: FETCH_COMPLETED_BOOKINGS_COMPLETED, payload: response?.bookings || response });
-  } catch (error) {
+  } catch (error: any) {
     console.log('[Saga] Fetch completed bookings failed:', error?.message);
     yield put({ type: FETCH_COMPLETED_BOOKINGS_ERROR, payload: error.message });
   }
 }
 
-export function* createBookingAsync(action) {
+export function* createBookingAsync(action: any) {
   console.log('[Saga] CREATE_BOOKING started');
   yield put({ type: CREATE_BOOKING_REQUEST });
   try {
@@ -90,7 +90,7 @@ export function* createBookingAsync(action) {
     const response = yield call(createBooking, token, action.payload);
     console.log('[Saga] Booking created successfully');
     yield put({ type: CREATE_BOOKING_COMPLETED, payload: response });
-  } catch (error) {
+  } catch (error: any) {
     console.log('[Saga] Create booking failed:', error?.message);
     yield put({ type: CREATE_BOOKING_ERROR, payload: error.message });
   }

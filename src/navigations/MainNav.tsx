@@ -1,3 +1,4 @@
+import { FC } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Text } from 'react-native';
@@ -11,7 +12,7 @@ import BookingDetailsScreen from '../screens/BookingDetailsScreen';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const DashboardStackNav = () => {
+const DashboardStackNav: FC = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Dashboard" component={DashboardScreen} />
@@ -24,7 +25,7 @@ const DashboardStackNav = () => {
   );
 };
 
-const MainNavigation = () => {
+const MainNavigation: FC = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -73,3 +74,6 @@ const MainNavigation = () => {
 };
 
 export default MainNavigation;
+
+
+

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import {
   View,
   Text,
@@ -28,7 +28,7 @@ const ProfileScreen = ({ navigation }) => {
     joinDate: 'Joined March 2024',
   };
 
-  const handleLogout = () => {
+  const handleLogout: FC = () => {
     Alert.alert(
       'Logout',
       'Are you sure you want to logout?',
@@ -303,3 +303,6 @@ const styles = StyleSheet.create({
 });
 
 export default ProfileScreen;
+
+
+

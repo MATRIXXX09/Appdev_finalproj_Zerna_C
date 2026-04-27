@@ -1,12 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import React, { FC } from 'react';
 import { Image, Text, TouchableOpacity, View, StyleSheet, ScrollView } from 'react-native';
 import { IMG, ROUTES } from '../utils';
-
 import { useDispatch } from 'react-redux';
 import { resetLogin } from '../app/reducers/auth';
 
-const HomeScreen = () => {
+const HomeScreen: FC = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -26,7 +25,6 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>KPOP UNIVERSE</Text>
         <TouchableOpacity
@@ -38,13 +36,11 @@ const HomeScreen = () => {
       </View>
 
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        {/* Welcome Section */}
         <View style={styles.welcomeSection}>
           <Text style={styles.welcomeText}>Welcome back!</Text>
           <Text style={styles.subtitleText}>Discover the latest K-pop trends</Text>
         </View>
 
-        {/* Categories */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Categories</Text>
           <View style={styles.categoriesGrid}>
@@ -57,7 +53,6 @@ const HomeScreen = () => {
           </View>
         </View>
 
-        {/* Featured Products */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Featured Products</Text>
           <View style={styles.productsGrid}>
@@ -73,21 +68,6 @@ const HomeScreen = () => {
                 </TouchableOpacity>
               </TouchableOpacity>
             ))}
-          </View>
-        </View>
-
-        {/* Trending Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Trending Now</Text>
-          <View style={styles.trendingCard}>
-            <Image source={{ uri: IMG.LOGO }} style={styles.trendingImage} />
-            <View style={styles.trendingInfo}>
-              <Text style={styles.trendingTitle}>New BTS Album Drop!</Text>
-              <Text style={styles.trendingSubtitle}>Limited edition available now</Text>
-              <TouchableOpacity style={styles.shopNowButton}>
-                <Text style={styles.shopNowText}>Shop Now</Text>
-              </TouchableOpacity>
-            </View>
           </View>
         </View>
       </ScrollView>
@@ -148,16 +128,17 @@ const styles = StyleSheet.create({
   },
   subtitleText: {
     fontSize: 16,
-    color: '#666666',
+    color: '#666',
+    fontWeight: '500',
   },
   section: {
-    marginTop: 25,
-    paddingHorizontal: 20,
+    marginHorizontal: 20,
+    marginTop: 30,
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: '800',
-    color: '#333333',
+    fontWeight: '900',
+    color: '#333',
     marginBottom: 15,
   },
   categoriesGrid: {
@@ -168,26 +149,22 @@ const styles = StyleSheet.create({
   categoryCard: {
     width: '48%',
     backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 15,
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 10,
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#ffb6c1',
-    shadowColor: '#ff1493',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#ffc0cb',
   },
   categoryIcon: {
-    fontSize: 30,
+    fontSize: 32,
     marginBottom: 10,
   },
   categoryName: {
     fontSize: 14,
-    fontWeight: '700',
-    color: '#d946ef',
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'center',
   },
   productsGrid: {
     flexDirection: 'row',
@@ -197,40 +174,35 @@ const styles = StyleSheet.create({
   productCard: {
     width: '48%',
     backgroundColor: '#ffffff',
-    borderRadius: 12,
+    borderRadius: 10,
     marginBottom: 15,
-    borderWidth: 2,
-    borderColor: '#ffb6c1',
-    shadowColor: '#ff1493',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#ffc0cb',
+    overflow: 'hidden',
   },
   productImage: {
     width: '100%',
-    height: 120,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    height: 100,
+    backgroundColor: '#f0f0f0',
   },
   productInfo: {
-    padding: 12,
+    padding: 10,
   },
   productTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#333333',
-    marginBottom: 5,
+    color: '#333',
   },
   productPrice: {
-    fontSize: 16,
-    fontWeight: '900',
+    fontSize: 12,
+    fontWeight: '600',
     color: '#ff1493',
+    marginTop: 5,
   },
   addToCartButton: {
     position: 'absolute',
-    top: 8,
-    right: 8,
+    bottom: 10,
+    right: 10,
     backgroundColor: '#ff1493',
     width: 30,
     height: 30,
@@ -240,55 +212,53 @@ const styles = StyleSheet.create({
   },
   addToCartText: {
     color: '#ffffff',
+    fontWeight: '700',
     fontSize: 18,
-    fontWeight: '900',
   },
   trendingCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 15,
-    padding: 20,
     flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 2,
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginBottom: 30,
+    borderWidth: 1,
     borderColor: '#ffc0cb',
-    shadowColor: '#ff1493',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 5,
   },
   trendingImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 10,
-    marginRight: 15,
+    width: '40%',
+    height: 150,
+    backgroundColor: '#f0f0f0',
   },
   trendingInfo: {
     flex: 1,
+    padding: 15,
+    justifyContent: 'center',
   },
   trendingTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '900',
     color: '#d946ef',
     marginBottom: 5,
   },
   trendingSubtitle: {
-    fontSize: 14,
-    color: '#666666',
-    marginBottom: 15,
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 10,
   },
   shopNowButton: {
     backgroundColor: '#ff1493',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
     borderRadius: 20,
     alignSelf: 'flex-start',
   },
   shopNowText: {
     color: '#ffffff',
-    fontWeight: '800',
-    fontSize: 14,
+    fontWeight: '700',
+    fontSize: 12,
   },
 });
 
 export default HomeScreen;
+
+

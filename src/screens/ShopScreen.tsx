@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import { Image, Text, TouchableOpacity, View, StyleSheet, ScrollView, TextInput } from 'react-native';
 import { IMG } from '../utils';
 
-const ShopScreen = () => {
+const ShopScreen: FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const products = [
@@ -273,3 +273,5 @@ const styles = StyleSheet.create({
 });
 
 export default ShopScreen;
+
+

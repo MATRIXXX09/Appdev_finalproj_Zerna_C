@@ -1,3 +1,4 @@
+import { FC } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ROUTES } from '../utils';
 
@@ -7,7 +8,7 @@ import Register from '../screens/auth/Register';
 
 const Stack = createStackNavigator();
 
-const AuthNavigation = () => {
+const AuthNavigation: FC = () => {
   return (
     <Stack.Navigator
       initialRouteName={ROUTES.LOGIN}
@@ -21,3 +22,6 @@ const AuthNavigation = () => {
 };
 
 export default AuthNavigation;
+
+
+

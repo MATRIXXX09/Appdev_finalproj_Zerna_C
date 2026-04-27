@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import { Image, Text, TouchableOpacity, View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { IMG } from '../utils';
 
-const CartScreen = () => {
+const CartScreen: FC = () => {
   const [cartItems, setCartItems] = useState([
     { id: 1, title: 'BTS - Map of the Soul: 7', price: 29.99, quantity: 1, image: IMG.LOGO },
     { id: 2, title: 'Blackpink - Born Pink Album', price: 24.99, quantity: 2, image: IMG.LOGO },
@@ -357,3 +357,5 @@ const styles = StyleSheet.create({
 });
 
 export default CartScreen;
+
+

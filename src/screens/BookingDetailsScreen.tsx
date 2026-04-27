@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ const BookingDetailsScreen = ({ navigation, route }) => {
   const { pickup, dropoff, mode } = route.params;
   const [isConfirmed, setIsConfirmed] = useState(false);
 
-  const handleConfirmBooking = () => {
+  const handleConfirmBooking: FC = () => {
     setIsConfirmed(true);
     setTimeout(() => {
       navigation.navigate('Dashboard');
@@ -225,3 +225,6 @@ const styles = StyleSheet.create({
 });
 
 export default BookingDetailsScreen;
+
+
+

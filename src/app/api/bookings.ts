@@ -1,12 +1,12 @@
 const BASE_URL = 'http://10.0.2.2:3000/api';
 
-const getAuthHeaders = (token) => ({
+const getAuthHeaders = (token: string) => ({
   Accept: 'application/json',
   'Content-Type': 'application/json',
   Authorization: `Bearer ${token}`,
 });
 
-export async function getUserWallet(token) {
+export async function getUserWallet(token: string): Promise<any> {
   try {
     const response = await fetch(BASE_URL + '/wallet', {
       method: 'GET',
@@ -19,13 +19,13 @@ export async function getUserWallet(token) {
       return data;
     }
     throw new Error(data.error || data.message || 'Failed to fetch wallet');
-  } catch (error) {
+  } catch (error: any) {
     console.log('[API] Get wallet failed:', error?.message);
     throw error;
   }
 }
 
-export async function getActiveBookings(token) {
+export async function getActiveBookings(token: string): Promise<any> {
   try {
     const response = await fetch(BASE_URL + '/bookings/active', {
       method: 'GET',
@@ -38,13 +38,13 @@ export async function getActiveBookings(token) {
       return data;
     }
     throw new Error(data.error || data.message || 'Failed to fetch bookings');
-  } catch (error) {
+  } catch (error: any) {
     console.log('[API] Get active bookings failed:', error?.message);
     throw error;
   }
 }
 
-export async function getCompletedBookings(token) {
+export async function getCompletedBookings(token: string): Promise<any> {
   try {
     const response = await fetch(BASE_URL + '/bookings/completed', {
       method: 'GET',
@@ -57,13 +57,13 @@ export async function getCompletedBookings(token) {
       return data;
     }
     throw new Error(data.error || data.message || 'Failed to fetch bookings');
-  } catch (error) {
+  } catch (error: any) {
     console.log('[API] Get completed bookings failed:', error?.message);
     throw error;
   }
 }
 
-export async function createBooking(token, bookingData) {
+export async function createBooking(token: string, bookingData: any): Promise<any> {
   try {
     const response = await fetch(BASE_URL + '/bookings', {
       method: 'POST',
@@ -77,13 +77,13 @@ export async function createBooking(token, bookingData) {
       return data;
     }
     throw new Error(data.error || data.message || 'Failed to create booking');
-  } catch (error) {
+  } catch (error: any) {
     console.log('[API] Create booking failed:', error?.message);
     throw error;
   }
 }
 
-export async function getBookingDetails(token, bookingId) {
+export async function getBookingDetails(token: string, bookingId: string): Promise<any> {
   try {
     const response = await fetch(BASE_URL + `/bookings/${bookingId}`, {
       method: 'GET',
@@ -96,7 +96,7 @@ export async function getBookingDetails(token, bookingId) {
       return data;
     }
     throw new Error(data.error || data.message || 'Failed to fetch booking details');
-  } catch (error) {
+  } catch (error: any) {
     console.log('[API] Get booking details failed:', error?.message);
     throw error;
   }

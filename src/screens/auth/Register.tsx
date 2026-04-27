@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -31,7 +31,7 @@ const Register = ({ navigation }) => {
     setAlertShown(false);
   }, [dispatch]);
 
-  const handleRegister = () => {
+  const handleRegister: FC = () => {
     setAlertShown(false);
 
     if (!firstName || !lastName || !username || !email || !password || !confirmPassword || !phoneNumber) {
@@ -314,3 +314,6 @@ const styles = StyleSheet.create({
 });
 
 export default Register;
+
+
+

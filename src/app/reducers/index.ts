@@ -1,12 +1,13 @@
-import { applyMiddleware, combineReducers, createStore } from 'redux';
-import { persistReducer, persistStore } from 'redux-persist';
+import { applyMiddleware, combineReducers, createStore, Store } from 'redux';
+import { persistReducer, persistStore, Persistor } from 'redux-persist';
 import autoMergeLevel1 from 'redux-persist/lib/stateReconciler/autoMergeLevel1';
 import createSagaMiddleware from 'redux-saga';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import auth from '../reducers/auth';
+import auth from './auth';
+import bookings from './bookings';
+import { RootState } from '../../types';
 
-// Config
 const sagaMiddleware = createSagaMiddleware();
 const rootPersistConfig = {
   key: 'root',
@@ -14,8 +15,6 @@ const rootPersistConfig = {
   blacklist: [],
 };
 
-// Only persist auth.data (token/user). Do not persist isLoading/isError/errorMessage
-// so buttons only show loading when a request is actually in progress.
 const authPersistConfig = {
   key: 'auth',
   storage: AsyncStorage,
@@ -23,18 +22,22 @@ const authPersistConfig = {
   stateReconciler: autoMergeLevel1,
 };
 
-// Combine Reducers
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, auth),
+  bookings,
 });
 
 const persistedReducer = persistReducer(rootPersistConfig, rootReducer);
 
-export default () => {
-  let store = createStore(persistedReducer, applyMiddleware(sagaMiddleware));
+interface StoreConfig {
+  store: Store<RootState>;
+  persistor: Persistor;
+  runSaga: any;
+}
 
-  let persistor = persistStore(store);
-
+export default (): StoreConfig => {
+  const store = createStore(persistedReducer, applyMiddleware(sagaMiddleware));
+  const persistor = persistStore(store);
   const runSaga = sagaMiddleware.run;
 
   return { store, persistor, runSaga };

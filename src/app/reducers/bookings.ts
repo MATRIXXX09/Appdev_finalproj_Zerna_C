@@ -1,3 +1,4 @@
+import { ReduxAction, BookingsState } from '../../types';
 import {
   FETCH_WALLET,
   FETCH_WALLET_REQUEST,
@@ -17,7 +18,7 @@ import {
   CREATE_BOOKING_ERROR,
 } from '../actions';
 
-const INITIAL_STATE = {
+const INITIAL_STATE: BookingsState = {
   wallet: {
     balance: 0,
     transactions: [],
@@ -44,9 +45,9 @@ const INITIAL_STATE = {
   },
 };
 
-export default function reducer(state = INITIAL_STATE, action) {
+export default function reducer(state: BookingsState = INITIAL_STATE, action: ReduxAction): BookingsState {
   console.log('[Bookings Reducer]', action.type, action.payload ? '(has payload)' : '');
-  
+
   switch (action.type) {
     case FETCH_WALLET_REQUEST:
       return {
@@ -69,7 +70,7 @@ export default function reducer(state = INITIAL_STATE, action) {
     case FETCH_WALLET_ERROR:
       return {
         ...state,
-        wallet: { ...state.wallet, isLoading: false, isError: true, errorMessage: action.payload },
+        wallet: { ...state.wallet, isLoading: false, isError: true, errorMessage: action.payload as string },
       };
 
     case FETCH_ACTIVE_BOOKINGS_REQUEST:
@@ -92,7 +93,7 @@ export default function reducer(state = INITIAL_STATE, action) {
     case FETCH_ACTIVE_BOOKINGS_ERROR:
       return {
         ...state,
-        activeBookings: { ...state.activeBookings, isLoading: false, isError: true, errorMessage: action.payload },
+        activeBookings: { ...state.activeBookings, isLoading: false, isError: true, errorMessage: action.payload as string },
       };
 
     case FETCH_COMPLETED_BOOKINGS_REQUEST:
@@ -115,7 +116,7 @@ export default function reducer(state = INITIAL_STATE, action) {
     case FETCH_COMPLETED_BOOKINGS_ERROR:
       return {
         ...state,
-        completedBookings: { ...state.completedBookings, isLoading: false, isError: true, errorMessage: action.payload },
+        completedBookings: { ...state.completedBookings, isLoading: false, isError: true, errorMessage: action.payload as string },
       };
 
     case CREATE_BOOKING_REQUEST:
@@ -137,7 +138,7 @@ export default function reducer(state = INITIAL_STATE, action) {
     case CREATE_BOOKING_ERROR:
       return {
         ...state,
-        createBooking: { isLoading: false, isError: true, errorMessage: action.payload },
+        createBooking: { isLoading: false, isError: true, errorMessage: action.payload as string },
       };
 
     default:

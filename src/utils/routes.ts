@@ -1,4 +1,4 @@
-export default {
+const ROUTES = {
   // Auth
   LOGIN: 'Login',
   REGISTER: 'Register',
@@ -9,3 +9,5 @@ export default {
   CART: 'Cart',
   PROFILE: 'Profile',
 };
+
+export default ROUTES;

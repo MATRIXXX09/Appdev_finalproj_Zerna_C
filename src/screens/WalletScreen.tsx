@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { FC, useEffect } from 'react';
 import {
   View,
   Text,
@@ -201,3 +201,6 @@ const styles = StyleSheet.create({
 });
 
 export default WalletScreen;
+
+
+
