@@ -3,7 +3,6 @@
  * Use these keys when sending or reading user data so backend and app stay in sync.
  */
 
-// Backend User entity fields (from Backend\src\Entity\User.php)
 export const USER_FIELDS = {
   ID: 'id',
   EMAIL: 'email',
@@ -15,13 +14,11 @@ export const USER_FIELDS = {
   ROLES: 'roles',
 };
 
-// Login request (POST /api/login)
 export const LOGIN_CREDENTIALS = {
   EMAIL: 'email',
   PASSWORD: 'password',
 };
 
-// Register request (POST /api/register) – must match RegisterController
 export const REGISTER_FIELDS = {
   FIRST_NAME: 'firstName',
   LAST_NAME: 'lastName',
@@ -31,7 +28,6 @@ export const REGISTER_FIELDS = {
   PHONE_NUMBER: 'phoneNumber',
 };
 
-// Login response user object (from AuthController)
 export const AUTH_RESPONSE_USER = {
   ID: 'id',
   USERNAME: 'username',
